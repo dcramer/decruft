@@ -7,9 +7,9 @@ from lxml.etree import tostring, tounicode
 from lxml.html.clean import Cleaner
 import traceback
 import sys
-logging.basicConfig(level=logging.INFO)
-logging.warning('hi')
-logging.debug('hi')
+
+logger = logging.getLogger('decruft')
+
 REGEXES = { 'unlikelyCandidatesRe': re.compile('share|bookmark|adwrapper|ad_wrapper|combx|comment|disqus|foot|header|menu|meta|nav|rss|shoutbox|sidebar|sponsor',re.I),
     'okMaybeItsACandidateRe': re.compile('and|article|body|column|main',re.I),
     'positiveRe': re.compile('caption|article|body|content|entry|hentry|page|pagination|post|text',re.I),
@@ -33,7 +33,7 @@ def describe(node):
 
 def log_candidates(candidates, print_format=""):
     for candidate, value in candidates.items():
-        logging.debug( "%s\t%s\t%s\t%s" %(id(candidate), describe(candidate), value['content_score'], describe(value['elem'])))
+        logger.debug( "%s\t%s\t%s\t%s" %(id(candidate), describe(candidate), value['content_score'], describe(value['elem'])))
 
 #def _text(node):
 #    return " ".join(node.findall(text=True))
@@ -47,7 +47,7 @@ class Document:
         self.options = defaultdict(lambda: None)
         for k, v in options.items():
             self.options[k] = v
-        self.notify = notify or logging.info
+        self.notify = notify or logger.info
         self.html = None
 
     def _html(self, force=False):
@@ -84,13 +84,13 @@ class Document:
                     article = self.get_article(candidates, best_candidate)
                 else:
                     if ruthless:
-                        logging.debug("ruthless removal did not work. ")
+                        logger.debug("ruthless removal did not work. ")
                         ruthless = False
                         self.debug("ended up stripping too much - going for a safer parse")
                         # try again
                         continue
                     else:
-                        logging.debug("Ruthless and lenient parsing did not work. Returning raw html")
+                        logger.debug("Ruthless and lenient parsing did not work. Returning raw html")
                         article = self.html.find('body') or self.html
 
                 cleaned_article = self.sanitize(article, candidates)
@@ -101,8 +101,8 @@ class Document:
                 else:
                     return cleaned_article
         except StandardError, e:
-            #logging.exception('error getting summary: ' + str(traceback.format_exception(*sys.exc_info())))
-            logging.exception('error getting summary: ' )
+            #logger.exception('error getting summary: ' + str(traceback.format_exception(*sys.exc_info())))
+            logger.exception('error getting summary: ' )
             raise Unparseable(str(e))
 
     def get_article(self, candidates, best_candidate):
@@ -227,7 +227,7 @@ class Document:
 
     def debug(self, *a):
         #if self.options['debug']:
-            logging.debug(*a)
+            logger.debug(*a)
 
     def remove_unlikely_candidates(self):
 
@@ -415,7 +415,7 @@ def main():
     if not (len(args) == 1 or options.url):
         parser.print_help()
         sys.exit(1)
-    logging.basicConfig(level=logging.INFO)
+    logger.basicConfig(level=logger.INFO)
 
     file = None
     if options.url:
