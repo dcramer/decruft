@@ -1,6 +1,5 @@
 import re
-from url_helpers import absolute_url
-from BeautifulSoup import BeautifulSoup, HTMLParseError, UnicodeDammit
+from BeautifulSoup import HTMLParseError, UnicodeDammit
 from logging import error
 import lxml.html as html
 from lxml.etree import tostring
@@ -24,7 +23,7 @@ def parse(raw_content, base_href=None, notify=lambda x: None):
         debug("Cleaned content: %s" % (cleaned,))
         return create_doc(cleaned, base_href)
     except HTMLParseError, e:
-        notify("parsing (%s) failed: %s" % (parse_method.__name__, e))
+        notify("parsing failed: %s" % (e,))
     raise Unparseable()
 
 def get_title(doc):
@@ -62,6 +61,7 @@ class Replacement(object):
         return self.regex.sub(self.replacement, content)
 
 def create_doc(content, base_href):
+    return html.fromstring(content, parser=html.HTMLParser(recover=True, remove_comments=True, no_network=True))
     html_doc = html.fromstring(content)
     if base_href:
         html_doc.make_links_absolute(base_href, resolve_base_href=True)
@@ -100,24 +100,6 @@ def _remove_crufty_html(content):
     for replacement in dodgy_regexes:
         content = replacement.apply(content)
     return content
-
-def _parse_methods():
-    def unicode_cleansed(content, base_href):
-        content = UnicodeDammit(content, isHTML=True).markup
-        cleaned = _remove_crufty_html(content)
-        debug("Cleaned content: %s" % (cleaned,))
-        return beautiful_soup(cleaned, base_href)
-
-    def ascii_cleansed(content, base_href):
-        content = ascii(content)
-        cleaned = _remove_crufty_html(content)
-        debug("Cleaned content: %s" % (cleaned,))
-        return beautiful_soup(cleaned, base_href)
-
-    return (
-        beautiful_soup,
-        unicode_cleansed,
-        ascii_cleansed)
 
 # strip out a set of nuisance html attributes that can mess up rendering in RSS feeds
 bad_attrs = ['width','height','style','[-a-z]*color','background[-a-z]*']

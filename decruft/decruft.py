@@ -1,12 +1,9 @@
 #!/usr/bin/env python
-from BeautifulSoup import NavigableString
 from page_parser import parse, get_title, get_body, Unparseable
 import logging
 import re
 from lxml.etree import tostring, tounicode
 from lxml.html.clean import Cleaner
-import traceback
-import sys
 
 logger = logging.getLogger('decruft')
 
@@ -69,9 +66,9 @@ class Document:
     def summary(self):
         try:
             ruthless = True
-            import pprint
             while True:
                 self._html(True)
+                # XXX: Cleaner should handle this, right?
                 [i.drop_tree() for i in self.tags(self.html, 'script', 'style')]
 
                 if ruthless: self.remove_unlikely_candidates()
@@ -327,6 +324,22 @@ class Document:
 
                         height = img.get('height')
                         width = img.get('width')
+                        
+                        if height:
+                            if height.endswith('px'):
+                                height = height.replace('px', '').strip()
+                            try:
+                                height = int(height)
+                            except (ValueError, TypeError):
+                                height = None
+                        if width:
+                            if width.endswith('px'):
+                                width = width.replace('px', '').strip()
+                            try:
+                                width = int(width)
+                            except (ValueError, TypeError):
+                                width = None
+                            
                         self.debug ("height %s width %s" %(repr(height), repr(width)))
                         if (height and int(height) >= 50) or (width and int(width) >= 50):
                             valid_img = True
