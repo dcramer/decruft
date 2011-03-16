@@ -7,10 +7,11 @@ from lxml.html.clean import Cleaner
 
 logger = logging.getLogger('decruft')
 
-REGEXES = { 'unlikelyCandidatesRe': re.compile('share|bookmark|adwrapper|ad_wrapper|combx|comment|disqus|foot|header|menu|meta|nav|rss|shoutbox|sidebar|sponsor',re.I),
-    'okMaybeItsACandidateRe': re.compile('and|article|body|column|main',re.I),
-    'positiveRe': re.compile('caption|article|body|content|entry|hentry|page|pagination|post|text',re.I),
-    'negativeRe': re.compile('adwrapper|ad_wrapper|share|bookmark|nav|combx|comment|contact|foot|footer|footnote|link|media|meta|promo|related|scroll|shoutbox|sponsor|tags|widget',re.I),
+REGEXES = {
+    'unlikelyCandidatesRe': re.compile('ad_wrapper|adwrapper|combx|comment|community|disqus|extra|foot|header|menu|remark|rss|shoutbox|sidebar|sponsor|ad-break|agegate|pagination|pager|popup|tweet|twitter',re.I),
+    'okMaybeItsACandidateRe': re.compile('and|article|body|column|main|shadow',re.I),
+    'positiveRe': re.compile('article|body|content|entry|hentry|main|page|pagination|post|text|blog|story',re.I),
+    'negativeRe': re.compile('ad_wrapper|adwrapper|combx|comment|com-|contact|foot|footer|footnote|masthead|media|meta|outbrain|promo|related|scroll|shoutbox|sidebar|sponsor|shopping|tags|tool|widget',re.I),
     'divToPElementsRe': re.compile('<(a|blockquote|dl|div|img|ol|p|pre|table|ul)',re.I),
     'replaceBrsRe': re.compile('(<br[^>]*>[ \n\r\t]*){2,}',re.I),
     'replaceFontsRe': re.compile('<(\/?)font[^>]*>',re.I),
