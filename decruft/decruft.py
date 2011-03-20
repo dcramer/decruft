@@ -228,13 +228,16 @@ class Document:
             logger.debug(*a)
 
     def remove_unlikely_candidates(self):
-
+        remove_list = []
         for elem in self.html.iter():
             s = "%s%s" % (elem.get('class', ''), elem.get('id', ''))
             self.debug(s)
             if REGEXES['unlikelyCandidatesRe'].search(s) and (not REGEXES['okMaybeItsACandidateRe'].search(s)) and elem.tag != 'body':
                 self.debug("Removing unlikely candidate - %s" % (s,))
-                elem.drop_tree()
+                remove_list.append(elem)
+        [e.drop_tree() for e in remove_list]
+
+
 
     def transform_misused_divs_into_paragraphs(self):
         for elem in self.html.iter():
