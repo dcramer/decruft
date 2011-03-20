@@ -41,7 +41,7 @@ class Document:
     RETRY_LENGTH = 250
 
     def __init__(self, input, notify=None, **options):
-        self.input = input
+        self.input = input.replace('\r','')
         self.options = defaultdict(lambda: None)
         for k, v in options.items():
             self.options[k] = v
