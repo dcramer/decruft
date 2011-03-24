@@ -9,7 +9,7 @@ __all__ = [
     'parse',
     'get_title',
     'get_body',
-    'ascii']
+    'utf8']
 
 def debug(s): pass
 
@@ -44,15 +44,15 @@ def get_body(doc):
         error("cleansing broke html content: %s\n---------\n%s" % (raw_html,cleaned))
         return raw_html
 
-def ascii(s):
-    return s.decode('ascii', 'ignore')
+def utf8(s):
+    return s.decode('utf-8', 'ignore')
 
 class Replacement(object):
     def __init__(self, desc, regex, replacement):
         self.desc = desc
         self.regex = regex
         self.replacement = replacement
-    
+
     def apply(self, content):
 #        # useful for debugging:
 #        try:
@@ -88,7 +88,7 @@ dodgy_regexes = (
         regex = re.compile('(<[^>]*[a-zA-Z]+\s*=\s*"[0-9]+)( [a-zA-Z]+="\w+"|/?>)'),
         replacement='\\1"\\2'),
     )
-    
+
 
 # helpers for parsing
 def normalize_spaces(s):

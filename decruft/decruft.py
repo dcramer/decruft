@@ -57,10 +57,10 @@ class Document:
                               remove_unknown_tags=False, safe_attrs_only=False)
             self.html = parse(cleaner.clean_html(self.input), self.options['url'], notify=self.notify)
         return self.html
-    
+
     def content(self):
         return get_body(self._html())
-    
+
     def title(self):
         return get_title(self._html())
 
@@ -76,7 +76,7 @@ class Document:
                 self.transform_misused_divs_into_paragraphs()
                 candidates = self.score_paragraphs(self.options.get('min_text_length', self.TEXT_LENGTH_THRESHOLD))
                 #log_candidates(candidates)
-                
+
                 best_candidate = self.select_best_candidate(candidates)
                 if best_candidate:
                     article = self.get_article(candidates, best_candidate)
@@ -110,8 +110,8 @@ class Document:
         sibling_score_threshold = max([10, best_candidate['content_score'] * 0.2])
         output = parse("<div/>")
         for sibling in best_candidate['elem'].getparent().getchildren():
-            #if isinstance(sibling, NavigableString): continue#in lxml there no concept of simple text 
-            append = False 
+            #if isinstance(sibling, NavigableString): continue#in lxml there no concept of simple text
+            append = False
             if sibling is best_candidate['elem']:
                 append = True
             sibling_key = sibling #HashableElement(sibling)
@@ -178,7 +178,7 @@ class Document:
             content_score += len(inner_text.split(','))
             content_score += min([(len(inner_text) / 100), 3])
             if elem not in candidates:
-                candidates[elem_key] = self.score_node(elem) 
+                candidates[elem_key] = self.score_node(elem)
             candidates[elem_key]['content_score'] += content_score
             candidates[parent_key]['content_score'] += content_score
             if grand_parent_node is not None:
@@ -328,7 +328,7 @@ class Document:
 
                         height = img.get('height')
                         width = img.get('width')
-                        
+
                         if height:
                             if height.endswith('px'):
                                 height = height.replace('px', '').strip()
@@ -343,7 +343,7 @@ class Document:
                                 width = int(width)
                             except (ValueError, TypeError):
                                 width = None
-                            
+
                         self.debug ("height %s width %s" %(repr(height), repr(width)))
                         if (height and int(height) >= 50) or (width and int(width) >= 50):
                             valid_img = True
@@ -428,7 +428,7 @@ def main():
     parser.add_option('-v', '--verbose', action='store_true')
     parser.add_option('-u', '--url', help="use URL instead of a local file")
     (options, args) = parser.parse_args()
-    
+
     if not (len(args) == 1 or options.url):
         parser.print_help()
         sys.exit(1)
@@ -441,7 +441,7 @@ def main():
     else:
         file = open(args[0])
     try:
-        print Document(file.read(), debug=options.verbose).summary().encode('ascii','ignore')
+        print Document(file.read(), debug=options.verbose).summary().encode('utf-8','ignore')
     finally:
         file.close()
 
