@@ -432,7 +432,7 @@ def main():
     if not (len(args) == 1 or options.url):
         parser.print_help()
         sys.exit(1)
-    logger.setLevel(level=logger.INFO)
+    logger.setLevel(level=logging.INFO)
 
     file = None
     if options.url:
