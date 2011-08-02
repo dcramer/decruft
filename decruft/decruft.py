@@ -441,7 +441,14 @@ def main():
     else:
         file = open(args[0])
     try:
-        print Document(file.read(), debug=options.verbose).summary().encode('utf-8','ignore')
+        content = file.read()
+        try:
+            import chardet
+            enc = chardet.detect(content)['encoding']
+            content = content.decode(enc)
+        except:
+            pass
+        print Document(content, debug=options.verbose).summary().encode('utf-8','ignore')
     finally:
         file.close()
 
