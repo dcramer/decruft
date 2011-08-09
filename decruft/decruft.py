@@ -284,7 +284,7 @@ class Document:
                 content_length = len(el.text_content()) # Count the text length excluding any surrounding whitespace
                 link_density = self.get_link_density(el)
                 parent_node = el.getparent()
-                if parent_node:
+                if parent_node is not None:
                     if parent_node in candidates:
                         content_score = candidates[parent_node]['content_score']
                     else:
