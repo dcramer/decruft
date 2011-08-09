@@ -11,19 +11,16 @@ __all__ = [
     'get_body',
     'utf8']
 
-def debug(s): pass
-
 class Unparseable(ValueError):
     pass
 
-def parse(raw_content, base_href=None, notify=lambda x: None):
+def parse(raw_content, base_href=None, notify=lambda *args: None):
     try:
         content = UnicodeDammit(raw_content, isHTML=True).markup
         cleaned = _remove_crufty_html(content)
-        debug("Cleaned content: %s" % (cleaned,))
         return create_doc(cleaned, base_href)
     except HTMLParseError, e:
-        notify("parsing failed: %s" % (e,))
+        notify("parsing failed:", e)
     raise Unparseable()
 
 def get_title(doc):
