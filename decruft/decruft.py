@@ -432,7 +432,7 @@ def main():
     if not (len(args) == 1 or options.url):
         parser.print_help()
         sys.exit(1)
-    logger.setLevel(level=logger.INFO)
+    logger.setLevel(level=logging.INFO)
 
     file = None
     if options.url:
@@ -441,7 +441,14 @@ def main():
     else:
         file = open(args[0])
     try:
-        print Document(file.read(), debug=options.verbose).summary().encode('utf-8','ignore')
+        content = file.read()
+        try:
+            import chardet
+            enc = chardet.detect(content)['encoding']
+            content = content.decode(enc)
+        except:
+            pass
+        print Document(content, debug=options.verbose).summary().encode('utf-8','ignore')
     finally:
         file.close()
 
