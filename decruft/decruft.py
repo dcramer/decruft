@@ -70,7 +70,7 @@ class Document:
             while True:
                 self._html(True)
                 # XXX: Cleaner should handle this, right?
-                [i.drop_tree() for i in self.tags(self.html, 'script', 'style')]
+                [i.drop_tree() for i in self.tags(self.html, 'script', 'style', 'noscript')]
 
                 if ruthless: self.remove_unlikely_candidates()
                 self.transform_misused_divs_into_paragraphs()
