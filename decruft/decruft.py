@@ -231,7 +231,6 @@ class Document:
         remove_list = []
         for elem in self.html.iter():
             s = "%s%s" % (elem.get('class', ''), elem.get('id', ''))
-            self.debug(s)
             if REGEXES['unlikelyCandidatesRe'].search(s) and (not REGEXES['okMaybeItsACandidateRe'].search(s)) and elem.tag != 'body':
                 self.debug("Removing unlikely candidate - %s" % (s,))
                 remove_list.append(elem)
