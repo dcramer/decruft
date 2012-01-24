@@ -2,7 +2,7 @@
 from page_parser import parse, get_title, get_body, Unparseable
 import logging
 import re
-from lxml.etree import tostring, tounicode
+from lxml.etree import tostring, tounicode, ParserError
 from lxml.html.clean import Cleaner
 
 logger = logging.getLogger('decruft')
@@ -98,7 +98,7 @@ class Document:
                     continue # try again
                 else:
                     return cleaned_article
-        except StandardError, e:
+        except (StandardError, ParserError), e:
             #logger.exception('error getting summary: ' + str(traceback.format_exception(*sys.exc_info())))
             logger.exception('error getting summary: ' )
             raise Unparseable(str(e))
